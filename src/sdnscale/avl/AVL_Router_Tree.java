@@ -4,33 +4,9 @@ import sdnscale.core.RouterTree;
 import sdnscale.model.PacketRule;
 import sdnscale.util.RotationCounter;
 
-/**
- * Implementação da Árvore AVL para o motor de busca do projeto SDN-Scale.
- *
- * <p>Gerencia objetos {@link PacketRule} mantendo a invariante AVL em todas
- * as operações: para todo nó {@code n}, o Fator de Balanceamento
- * {@code FB(n) = altura(esquerdo) - altura(direito)} satisfaz {@code |FB| ≤ 1}.</p>
- *
- * <p><b>Rotações implementadas:</b></p>
- * <ul>
- *   <li>Rotação simples à direita (caso Left-Left)</li>
- *   <li>Rotação simples à esquerda (caso Right-Right)</li>
- *   <li>Rotação dupla esquerda-direita (caso Left-Right)</li>
- *   <li>Rotação dupla direita-esquerda (caso Right-Left)</li>
- * </ul>
- *
- * <p><b>Deleção:</b> Implementada via sucessor in-order (menor nó da
- * subárvore direita), com propagação de rebalanceamento até a raiz.</p>
- *
- * @author  Integrante 1 – Lead Software Engineer
- * @version 1.0
- * @see     RouterTree
- */
+
 public class AVL_Router_Tree implements RouterTree {
 
-    // =========================================================================
-    // Estado interno
-    // =========================================================================
 
     /** Raiz da árvore. {@code null} se a árvore estiver vazia. */
     private AVLNode root;
@@ -41,30 +17,14 @@ public class AVL_Router_Tree implements RouterTree {
     /** Contador de rotações compartilhado com os benchmarks do Integrante 2. */
     private final RotationCounter rotationCounter;
 
-    // =========================================================================
-    // Construtor
-    // =========================================================================
 
-    /**
-     * Cria uma AVL_Router_Tree vazia e inicializa o contador de rotações
-     * isolado para esta estrutura.
-     */
     public AVL_Router_Tree() {
         this.root            = null;
         this.size            = 0;
         this.rotationCounter = RotationCounter.getInstance("AVL");
     }
 
-    // =========================================================================
-    // Operações de escrita — insert
-    // =========================================================================
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Após a inserção, o caminho da raiz até o nó inserido é percorrido
-     * de volta atualizando alturas e aplicando rotações onde {@code |FB| > 1}.</p>
-     */
     @Override
     public void insert(PacketRule rule) {
         if (rule == null) {
@@ -96,17 +56,8 @@ public class AVL_Router_Tree implements RouterTree {
         return rebalance(node);
     }
 
-    // =========================================================================
-    // Operações de escrita — delete
-    // =========================================================================
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p><b>Desafio da Deleção:</b> Após remover o nó, o rebalanceamento
-     * é propagado até a raiz via recursão, corrigindo todo nó cujo
-     * {@code |FB| > 1} no caminho de volta.</p>
-     */
+
     @Override
     public boolean delete(int ruleId) {
         if (!contains(root, ruleId)) {
@@ -155,11 +106,7 @@ public class AVL_Router_Tree implements RouterTree {
         return rebalance(node);
     }
 
-    // =========================================================================
-    // Operações de leitura — search
-    // =========================================================================
 
-    /** {@inheritDoc} */
     @Override
     public PacketRule search(int ruleId) {
         AVLNode result = search(root, ruleId);
@@ -179,45 +126,38 @@ public class AVL_Router_Tree implements RouterTree {
         return search(node.right, ruleId);
     }
 
-    // =========================================================================
-    // Inspeção estrutural (suporte ao Integrante 3 — QA)
-    // =========================================================================
 
-    /** {@inheritDoc} */
+
     @Override
     public int getHeight() {
         return height(root);
     }
 
-    /** {@inheritDoc} */
+
     @Override
     public int size() {
         return size;
     }
 
-    /** {@inheritDoc} */
+
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /** {@inheritDoc} */
+
     @Override
     public int getRotationCount() {
         return rotationCounter.getCount();
     }
 
-    /** {@inheritDoc} */
+
     @Override
     public void resetRotationCount() {
         rotationCounter.reset();
     }
 
-    // =========================================================================
-    // Utilitários de diagnóstico
-    // =========================================================================
 
-    /** {@inheritDoc} */
     @Override
     public String inOrderTraversal() {
         StringBuilder sb = new StringBuilder();
@@ -236,7 +176,7 @@ public class AVL_Router_Tree implements RouterTree {
         inOrder(node.right, sb);
     }
 
-    /** {@inheritDoc} */
+
     @Override
     public String toTreeString() {
         if (root == null) return "(árvore vazia)";
@@ -260,48 +200,22 @@ public class AVL_Router_Tree implements RouterTree {
         }
     }
 
-    // =========================================================================
-    // Núcleo AVL — altura, fator de balanceamento e rotações
-    // =========================================================================
 
-    /**
-     * Retorna a altura do nó, tratando {@code null} como {@code -1}.
-     */
     int height(AVLNode node) {
         return (node == null) ? -1 : node.height;
     }
 
-    /**
-     * Atualiza a altura de um nó com base na altura de seus filhos.
-     * Deve ser chamado após qualquer modificação nos filhos do nó.
-     */
+
     private void updateHeight(AVLNode node) {
         node.height = 1 + Math.max(height(node.left), height(node.right));
     }
 
-    /**
-     * Calcula o Fator de Balanceamento do nó.
-     *
-     * <ul>
-     *   <li>{@code FB > 1}  → subárvore esquerda mais alta → rotação à direita</li>
-     *   <li>{@code FB < -1} → subárvore direita mais alta  → rotação à esquerda</li>
-     * </ul>
-     */
+
     private int balanceFactor(AVLNode node) {
         return height(node.left) - height(node.right);
     }
 
-    /**
-     * Verifica o Fator de Balanceamento e aplica a rotação correta se necessário.
-     *
-     * <p>Quatro casos possíveis:</p>
-     * <pre>
-     *   FB > 1  e filho esquerdo FB >= 0 → Left-Left   → rotação simples direita
-     *   FB > 1  e filho esquerdo FB <  0 → Left-Right  → rotação dupla esq-dir
-     *   FB < -1 e filho direito  FB <= 0 → Right-Right → rotação simples esquerda
-     *   FB < -1 e filho direito  FB >  0 → Right-Left  → rotação dupla dir-esq
-     * </pre>
-     */
+
     private AVLNode rebalance(AVLNode node) {
         int fb = balanceFactor(node);
 
@@ -331,22 +245,7 @@ public class AVL_Router_Tree implements RouterTree {
         return node;
     }
 
-    /**
-     * Rotação simples à direita (caso Left-Left).
-     *
-     * <pre>
-     *       z                y
-     *      / \             /   \
-     *     y   T4   →      x     z
-     *    / \             / \   / \
-     *   x   T3          T1 T2 T3 T4
-     *  / \
-     * T1  T2
-     * </pre>
-     *
-     * @param z nó desbalanceado (raiz local antes da rotação)
-     * @return nova raiz local após a rotação ({@code y})
-     */
+
     private AVLNode rotateRight(AVLNode z) {
         AVLNode y  = z.left;
         AVLNode T3 = y.right;
@@ -363,22 +262,7 @@ public class AVL_Router_Tree implements RouterTree {
         return y;
     }
 
-    /**
-     * Rotação simples à esquerda (caso Right-Right).
-     *
-     * <pre>
-     *   z                    y
-     *  / \                 /   \
-     * T1   y       →      z     x
-     *     / \            / \   / \
-     *    T2   x         T1 T2 T3 T4
-     *        / \
-     *       T3  T4
-     * </pre>
-     *
-     * @param z nó desbalanceado (raiz local antes da rotação)
-     * @return nova raiz local após a rotação ({@code y})
-     */
+
     private AVLNode rotateLeft(AVLNode z) {
         AVLNode y  = z.right;
         AVLNode T2 = y.left;
@@ -395,15 +279,8 @@ public class AVL_Router_Tree implements RouterTree {
         return y;
     }
 
-    // =========================================================================
-    // Auxiliares internos
-    // =========================================================================
 
-    /**
-     * Verifica se existe um nó com o {@code ruleId} fornecido.
-     * Usado internamente antes da deleção para retornar {@code false}
-     * sem alterar o estado da árvore.
-     */
+
     private boolean contains(AVLNode node, int ruleId) {
         if (node == null) return false;
         if (ruleId == node.rule.getRuleId()) return true;
@@ -411,10 +288,7 @@ public class AVL_Router_Tree implements RouterTree {
         return contains(node.right, ruleId);
     }
 
-    /**
-     * Retorna o nó com o menor {@code ruleId} na subárvore enraizada em
-     * {@code node}. Utilizado para encontrar o sucessor in-order na deleção.
-     */
+
     private AVLNode findMin(AVLNode node) {
         while (node.left != null) {
             node = node.left;
