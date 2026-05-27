@@ -4,55 +4,16 @@ import sdnscale.avl.AVL_Router_Tree;
 import sdnscale.redblack.RedBlack_Router_Tree;
 import sdnscale.core.RouterTree;
 
-/**
- * Validador de invariantes estruturais para as árvores AVL e Red-Black.
- *
- * <p>Responsabilidade exclusiva do Integrante 3 (QA). Esta classe audita
- * as duas implementações de {@link RouterTree} após operações de inserção
- * e deleção, garantindo que as propriedades matemáticas de cada estrutura
- * foram preservadas.</p>
- *
- * <p><b>Como usar:</b></p>
- * <pre>{@code
- * AVL_Router_Tree avl = new AVL_Router_Tree();
- * // ... inserções e deleções ...
- * InvariantChecker.checkAVL(avl);
- *
- * RedBlack_Router_Tree rbt = new RedBlack_Router_Tree();
- * // ... inserções e deleções ...
- * InvariantChecker.checkRedBlack(rbt);
- * }</pre>
- *
- * @author  Integrante 3 – QA / Validação
- * @version 1.0
- */
 public final class InvariantChecker {
 
-    // =========================================================================
-    // Construtor privado — classe utilitária, não instanciável
-    // =========================================================================
+
 
     private InvariantChecker() {
         throw new UnsupportedOperationException(
                 "InvariantChecker é uma classe utilitária e não deve ser instanciada.");
     }
 
-    // =========================================================================
-    // Validação AVL
-    // =========================================================================
 
-    /**
-     * Valida todos os invariantes da Árvore AVL.
-     *
-     * <p>Verifica:</p>
-     * <ul>
-     *   <li>Propriedade BST: {@code inOrderTraversal()} retorna IDs crescentes</li>
-     *   <li>Invariante AVL: altura respeita {@code h < 1.44 * log₂(n+2)}</li>
-     * </ul>
-     *
-     * @param avl instância da AVL a ser auditada
-     * @throws AssertionError se qualquer invariante for violado
-     */
     public static void checkAVL(AVL_Router_Tree avl) {
         System.out.println("=== Auditoria AVL ===");
 
@@ -66,13 +27,7 @@ public final class InvariantChecker {
         System.out.println();
     }
 
-    /**
-     * Verifica se a altura da AVL respeita o limite teórico.
-     *
-     * <p>Para uma AVL com {@code n} nós, a altura máxima é
-     * {@code h < 1.44 * log₂(n+2)}. Qualquer valor acima indica
-     * falha no rebalanceamento.</p>
-     */
+
     private static void checkAVLHeight(AVL_Router_Tree avl) {
         int n = avl.size();
         if (n == 0) return;
@@ -92,22 +47,7 @@ public final class InvariantChecker {
         System.out.println("   ✓ Altura dentro do limite teórico AVL.");
     }
 
-    // =========================================================================
-    // Validação Red-Black
-    // =========================================================================
 
-    /**
-     * Valida todos os invariantes da Árvore Red-Black.
-     *
-     * <p>Verifica:</p>
-     * <ul>
-     *   <li>Propriedade BST: {@code inOrderTraversal()} retorna IDs crescentes</li>
-     *   <li>Altura máxima: {@code h ≤ 2 * log₂(n+1)}</li>
-     * </ul>
-     *
-     * @param rbt instância da Red-Black a ser auditada
-     * @throws AssertionError se qualquer invariante for violado
-     */
     public static void checkRedBlack(RedBlack_Router_Tree rbt) {
         System.out.println("=== Auditoria Red-Black ===");
 
@@ -121,12 +61,6 @@ public final class InvariantChecker {
         System.out.println();
     }
 
-    /**
-     * Verifica se a altura da RBT respeita o limite teórico.
-     *
-     * <p>Para uma RBT com {@code n} nós, a altura máxima é
-     * {@code h ≤ 2 * log₂(n+1)}.</p>
-     */
     private static void checkRBTHeight(RedBlack_Router_Tree rbt) {
         int n = rbt.size();
         if (n == 0) return;
@@ -146,18 +80,7 @@ public final class InvariantChecker {
         System.out.println("   ✓ Altura dentro do limite teórico Red-Black.");
     }
 
-    // =========================================================================
-    // Validação comum — propriedade BST
-    // =========================================================================
 
-    /**
-     * Verifica se a propriedade BST foi preservada em qualquer implementação
-     * de {@link RouterTree}, validando que o percurso in-order retorna os
-     * IDs em ordem estritamente crescente.
-     *
-     * @param tree instância a ser auditada
-     * @throws AssertionError se a ordem não for crescente
-     */
     public static void checkBSTProperty(RouterTree tree) {
         String traversal = tree.inOrderTraversal();
 
@@ -182,18 +105,6 @@ public final class InvariantChecker {
         System.out.println("   ✓ Propriedade BST verificada: IDs em ordem crescente.");
     }
 
-    // =========================================================================
-    // Relatório comparativo
-    // =========================================================================
-
-    /**
-     * Imprime um relatório comparativo entre as duas árvores após os
-     * testes de carga do Integrante 2, consolidando as métricas para
-     * o relatório Post-Mortem.
-     *
-     * @param avl instância da AVL após os benchmarks
-     * @param rbt instância da Red-Black após os benchmarks
-     */
     public static void printComparativeReport(AVL_Router_Tree avl,
                                               RedBlack_Router_Tree rbt) {
         System.out.println("╔══════════════════════════════════════════════╗");
