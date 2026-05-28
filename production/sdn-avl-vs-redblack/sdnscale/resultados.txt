@@ -1,0 +1,57 @@
+╔══════════════════════════════════════════════════════╗
+║         SDN-Scale — Benchmark Comparativo            ║
+║  AVL Router Tree  vs  Red-Black Router Tree          ║
+╚══════════════════════════════════════════════════════╝
+
+Seed fixa: 42 | Nós: 100.000 | Buscas: 10.000 | Deleção: 20%
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 1 — Inserção de 100.000 regras
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [AVL] Tempo: 87,16 ms | Rotações: 69.920 | Altura: 19 | Nós: 100.000
+  [RBT] Tempo: 40,90 ms | Rotações: 58.252 | Altura: 19 | Nós: 100.000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 2 — Busca de 10.000 regras
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [AVL] Tempo total: 5,38 ms | Média por busca: 538,39 ns
+  [RBT] Tempo total: 4,64 ms | Média por busca: 463,78 ns
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 3 — Deleção de 20% dos nós (20.000 regras)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [AVL] Tempo: 24,72 ms | Rotações: 7.211 | Altura: 19 | Nós: 80.000
+  [RBT] Tempo: 21,26 ms | Rotações: 6.634 | Altura: 19 | Nós: 80.000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 4 — Validação de Invariantes Pós-Deleção
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+=== Auditoria AVL ===
+   ✓ Propriedade BST verificada: IDs em ordem crescente.
+   Verificando altura: atual=19, máximo teórico=23,45
+   ✓ Altura dentro do limite teórico AVL.
+✅ Todos os invariantes AVL validados com sucesso.
+   Nós: 80000
+   Altura atual: 19
+   Rotações realizadas: 0
+
+=== Auditoria Red-Black ===
+   ✓ Propriedade BST verificada: IDs em ordem crescente.
+   Verificando altura: atual=19, máximo teórico=32,58
+   ✓ Altura dentro do limite teórico Red-Black.
+✅ Todos os invariantes Red-Black validados com sucesso.
+   Nós: 80000
+   Altura atual: 19
+   Rotações realizadas: 6634
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RELATÓRIO FINAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Métrica                        AVL             Red-Black
+--------------------------------------------------------------
+Tempo inserção (ms)            87,16           40,90
+Rotações na inserção           69.920          58.252
+Tempo busca (ms)               5,38            4,64
+Tempo deleção 20%% (ms)        24,72           21,26
+Rotações na deleção            7.211           6.634
+Altura final                   19              19
+Nós restantes                  80000           80000
+--------------------------------------------------------------
+Benchmark concluído. Resultados prontos para o Post-Mortem.
